@@ -44,15 +44,12 @@ function app() {
 
     var GifyView = React.createClass({
 
-
     	componentWillMount: function(){
     		var self = this
     		this.props.gifs.on('sync', function() {self.forceUpdate()})
     	},
 
     	render:function(){
-    		console.log('===============rendering app==============')
-    		console.log(this.props.gifs)
 
     	return (
     		<div className='gifsContainer'>
@@ -66,37 +63,57 @@ function app() {
 
     var Header = React.createClass({
     	render: function() {
-    		return (
-    			console.log('////////scrollFunction//////')
-    			console.log(this)
 
+    		return (
     			<div className='heading'>
     				<h1 className='gifTitle'>Your Gifs</h1>
     				<h3 className='subTitle'>All your gifs in one place! </h3>
+    			</div>
+    		)
+    	}
+    })
+
+    var Scroll = React.createClass({
+
+    	_getGifsJSX:function(gifsArray){
+    		var gifsJSXArray = []
+    		gifsArray.forEach(function(gifObject){
+    			var component = <Gifys key={gifObject.id} gifs={gifObject} />
+    			gifsJSXArray.push(component)
+    		})
+    		return gifsJSXArray
+    	},
+
+    	render: function(){
+    		return (
+    			<div>
+    				{this._getGifsJSX(this.props.gifs.models)}
     			</div>
     			)
     	}
     })
 
-    var Scroll = React.createClass({
-    	render: function(){
-    		console.log('////////scrollFunction//////')
-    		console.log(this)
+
+    var Gifys = React.createClass({
+
+    	render:function(){
+    		var gifs = this.props.gifs
+    		console.log(gifs.get('images').original.url)
     		return (
-    			<div></div>
+    			<div>
+    				<img src={gifs.get('images').original.url}/>
+    			</div>
     			)
     	}
     })
-
 
     var GifyCollection = Backbone.Collection.extend({
     	url:'http://api.giphy.com/v1/gifs/search?q=husky',
     	api_key:'dc6zaTOxFJmzC',
 
-    	// parse:function(rawJSON){
-    	// 	console.log('/////parse/////')
-    	// 	console.log(rawJSON)
-    	// }
+    	parse:function(rawJSON){
+    		return rawJSON.data
+    	}
     })
 
 
